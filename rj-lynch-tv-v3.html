@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RJ Lynch — Channel Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap');
+
+/* screen rectangle measured off the photo */
+:root{
+  --scr-l:45.72%;
+  --scr-t:51.84%;
+  --scr-w:19.11%;
+  --scr-h:15.68%;
+  --scr-cx:55.28%;
+  --scr-cy:59.68%;
+  --zoom:3.55;
+  --ink:#2b1d14;
+  --ink-soft:#5c4433;
+  --accent:#d9622a;
+  --accent-2:#37788f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#0e0906}
+body{font-family:'DM Sans',system-ui,sans-serif}
+
+.stage{position:fixed;inset:0;overflow:hidden;background:#0e0906}
+.scene{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(1);
+  transform-origin:var(--scr-cx) var(--scr-cy);
+  transition:transform 1.15s cubic-bezier(.65,.02,.25,1);
+  will-change:transform;
+}
+.scene.zoomed{transform:translate(-50%,-50%) scale(var(--zoom))}
+.plate{display:block;user-select:none;-webkit-user-drag:none}
+
+.screen{
+  position:absolute;
+  left:var(--scr-l);top:var(--scr-t);
+  width:var(--scr-w);height:var(--scr-h);
+  overflow:hidden;cursor:pointer;
+  background:linear-gradient(to bottom,#bcdff0 0%,#dbeef2 46%,#f6e3c6 100%);
+}
+.vscreen{position:absolute;top:0;left:0;width:720px;height:540px;transform-origin:top left;color:var(--ink)}
+.vpad{position:absolute;inset:0;padding:32px 38px 50px;overflow-y:auto;overflow-x:hidden}
+.vpad::-webkit-scrollbar{width:7px}
+.vpad::-webkit-scrollbar-thumb{background:rgba(110,80,55,.35);border-radius:4px}
+.vpad::-webkit-scrollbar-track{background:transparent}
+
+.page{display:none}
+.page.live{display:block;animation:tune .38s ease-out both}
+@keyframes tune{0%{opacity:0;transform:scaleY(.55);filter:blur(2px)}100%{opacity:1;transform:none;filter:none}}
+
+.kicker{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2.6px;color:#fff;
+  background:var(--accent);padding:5px 10px;border-radius:3px;margin-bottom:14px}
+h1{font-family:'VT323',monospace;font-size:52px;line-height:.92;color:var(--ink);
+  margin-bottom:6px;text-shadow:2px 2px 0 rgba(255,255,255,.42)}
+.dek{font-size:15px;font-style:italic;color:var(--accent-2);margin-bottom:16px;max-width:56ch}
+h2{font-family:'VT323',monospace;font-size:34px;line-height:1;color:var(--ink);margin:34px 0 4px;
+  padding-top:22px;border-top:1px solid rgba(150,110,75,.3)}
+h2:first-of-type{border-top:none;padding-top:0;margin-top:20px}
+h3{font-size:13px;font-weight:700;letter-spacing:.4px;color:var(--accent);margin-bottom:9px}
+p{font-size:14.5px;line-height:1.62;margin-bottom:11px;max-width:60ch;color:var(--ink-soft)}
+strong{color:var(--ink);font-weight:700}
+em{font-style:italic}
+.stats{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0 4px}
+.stat{background:rgba(255,255,255,.5);border:1px solid rgba(150,110,75,.3);border-radius:6px;padding:7px 12px;min-width:104px}
+.stat b{display:block;font-family:'VT323',monospace;font-size:30px;color:var(--accent);line-height:1}
+.stat span{font-size:8.5px;letter-spacing:1.5px;color:var(--ink-soft);font-weight:500}
+ul{list-style:none;margin:9px 0}
+li{font-size:14.5px;line-height:1.6;padding-left:20px;position:relative;margin-bottom:6px;color:var(--ink-soft);max-width:58ch}
+li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
+
+.ticker{position:absolute;left:0;right:0;bottom:0;background:rgba(45,29,20,.9);padding:7px 0;overflow:hidden;white-space:nowrap;z-index:4}
+.ticker span{display:inline-block;font-size:11px;letter-spacing:2px;color:#f6e3c6;animation:slide 34s linear infinite}
+@keyframes slide{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+
+.chnum{position:absolute;top:18px;right:24px;font-family:'VT323',monospace;font-size:40px;z-index:4;
+  color:#fff;text-shadow:2px 2px 0 rgba(45,29,20,.55);opacity:0;transition:opacity .25s}
+.chnum.show{opacity:1}
+
+.crt{position:absolute;inset:0;pointer-events:none;z-index:5}
+.crt.lines{background:repeating-linear-gradient(to bottom,rgba(60,40,25,.16) 0 1px,transparent 1px 3px)}
+.crt.glass{background:linear-gradient(118deg,rgba(255,255,255,.30) 0%,rgba(255,255,255,.05) 22%,transparent 46%),
+  radial-gradient(ellipse at center,transparent 52%,rgba(40,24,12,.45) 100%)}
+.crt.grade{background:linear-gradient(115deg,rgba(255,196,120,.30),rgba(255,150,90,.10) 55%,rgba(120,160,200,.12));mix-blend-mode:overlay}
+.crt.bloom{box-shadow:inset 0 0 40px rgba(255,220,170,.35);background:radial-gradient(ellipse at 50% 45%,rgba(255,240,210,.16),transparent 70%)}
+.roll{position:absolute;left:0;right:0;height:78px;pointer-events:none;z-index:6;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.13),transparent);animation:rolldown 9s linear infinite}
+@keyframes rolldown{from{top:-78px}to{top:100%}}
+.snow{position:absolute;inset:0;z-index:7;opacity:0;pointer-events:none;
+  background-image:repeating-conic-gradient(#fff 0% .0006%,#4a3524 .0006% .0012%);background-size:120px 120px}
+.snow.on{animation:snow .3s steps(4) 1}
+@keyframes snow{0%{opacity:.85;background-position:0 0}40%{opacity:.6;background-position:44px -28px}
+  75%{opacity:.35;background-position:-20px 36px}100%{opacity:0}}
+
+.spill{position:absolute;left:var(--scr-l);top:var(--scr-t);width:var(--scr-w);height:var(--scr-h);
+  pointer-events:none;z-index:-1;box-shadow:0 0 90px 50px rgba(150,200,230,.30);
+  filter:blur(10px);animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.75}50%{opacity:1}}
+
+.grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.11;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation:gm .45s steps(3) infinite}
+@keyframes gm{0%{transform:translate(0,0)}33%{transform:translate(-3px,2px)}66%{transform:translate(2px,-2px)}100%{transform:translate(0,0)}}
+.vig{position:fixed;inset:0;z-index:58;pointer-events:none;
+  background:radial-gradient(ellipse 80% 72% at 50% 46%,transparent 42%,rgba(30,15,6,.55) 100%)}
+
+.hud{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;justify-content:center;padding:22px 16px 26px;pointer-events:none}
+.remote{pointer-events:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  background:rgba(30,19,12,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,214,168,.18);border-radius:14px;padding:10px 12px;
+  box-shadow:0 18px 44px rgba(0,0,0,.55);opacity:0;transform:translateY(14px);transition:.5s .3s}
+.remote.in{opacity:1;transform:none}
+.btn{font-size:8.5px;font-weight:500;letter-spacing:.5px;padding:9px 10px;border-radius:8px;
+  cursor:pointer;line-height:1.25;color:#f2e3d2;background:rgba(255,225,190,.09);
+  border:1px solid rgba(255,214,168,.16);transition:.15s;text-align:center;min-width:64px}
+.btn b{display:block;font-family:'VT323',monospace;font-size:17px;color:#ffb37a}
+.btn:hover{background:rgba(255,225,190,.2)}
+.btn.live{background:linear-gradient(165deg,#e0762f,#b64d1c);border-color:transparent;color:#fff}
+.btn.live b{color:#ffe4cd}
+
+.cta{position:fixed;z-index:70;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;color:#fff;pointer-events:none;transition:opacity .5s}
+.cta .ring{width:74px;height:74px;border:2px solid rgba(255,255,255,.85);border-radius:50%;margin:0 auto 14px;animation:ping 2.1s ease-out infinite}
+@keyframes ping{0%{transform:scale(.72);opacity:.95}100%{transform:scale(1.5);opacity:0}}
+.cta p{font-size:11px;letter-spacing:3.4px;text-shadow:0 2px 12px rgba(0,0,0,.8);color:#fff;margin:0}
+.cta.gone{opacity:0}
+.back{position:fixed;top:20px;left:20px;z-index:70;pointer-events:auto;
+  background:rgba(30,19,12,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(255,214,168,.18);color:#f2e3d2;font-size:9px;letter-spacing:2px;
+  padding:10px 15px;border-radius:9px;cursor:pointer;opacity:0;transform:translateY(-8px);transition:.4s}
+.back.in{opacity:1;transform:none}
+.hint{position:fixed;bottom:8px;left:0;right:0;text-align:center;z-index:70;
+  font-size:7.5px;letter-spacing:2px;color:rgba(255,225,190,.42);pointer-events:none}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <div class="scene" id="scene">
+    <img src="room.jpg" class="plate" id="plate" alt="">
+    <div class="spill"></div>
+
+    <div class="screen" id="screen">
+      <div class="vscreen" id="vscreen">
+        <div class="vpad" id="vpad">
+
+          <!-- ══ CH 00 — HOME ══ -->
+          <section class="page live" data-ch="0">
+            <div class="kicker">CH 00 — NOW PLAYING</div>
+            <h1>RJ LYNCH</h1>
+            <p class="dek">Creative Director · New York</p>
+            <p>Fifty percent art. Fifty percent copy. One hundred percent social. Classically trained in PR with the instincts of a viral creator.</p>
+            <div class="stats">
+              <div class="stat"><b>#1</b><span>SRIRACHA IN US</span></div>
+              <div class="stat"><b>20M+</b><span>ORGANIC VIEWS</span></div>
+              <div class="stat"><b>300K</b><span>OWN FOLLOWING</span></div>
+              <div class="stat"><b>$12</b><span>BEST BUY EVER</span></div>
+            </div>
+            <h2>TONIGHT'S LINEUP</h2>
+            <ul>
+              <li><strong>CH 01</strong> — Creative Campaign Strategy</li>
+              <li><strong>CH 02</strong> — ACD + Head of Content</li>
+              <li><strong>CH 03</strong> — Personal Hits</li>
+              <li><strong>CH 04</strong> — The Houdini Museum</li>
+              <li><strong>CH 05</strong> — NY Times to Netflix</li>
+              <li><strong>CH 06</strong> — Traditional PR</li>
+              <li><strong>CH 07</strong> — Social Creative</li>
+            </ul>
+            <p style="margin-top:16px">rajonlynch@gmail.com · (920) 297-0179</p>
+          </section>
+
+          <!-- ══ CH 01 — CREATIVE CAMPAIGN STRATEGY ══ -->
+          <section class="page" data-ch="1">
+            <div class="kicker">CH 01 — CREATIVE CAMPAIGN STRATEGY</div>
+
+            <h2>SRIRACHA SHORTAGE</h2>
+            <h3>TABASCO</h3>
+            <p class="dek">Turning a competitor's shortage into a two-year brand opportunity.</p>
+            <p>While working as TABASCO's first Content Strategist, I noticed something interesting happening around a competitor: Huy Fong Foods was experiencing a massive Sriracha shortage. Bottles were reselling for $50+, news coverage was exploding, and every new mention of the shortage created another spike in conversation.</p>
+            <p>There was just one opportunity everyone seemed to be overlooking: <strong>TABASCO made Sriracha, too.</strong></p>
+            <p>For $12, I purchased Sriracha-Shortage.com and built a newsjacking strategy designed to insert TABASCO directly into the conversation every time the shortage resurfaced. We supported it with a flight of reactive content and short films that playfully trolled the competition and gave consumers an alternative when their usual bottle disappeared.</p>
+            <p>The idea turned a competitor's supply problem into an ongoing cultural moment for TABASCO, helping propel TABASCO Sriracha to become the <strong>#1 Sriracha in the U.S. for the following two years.</strong></p>
+
+            <h2>THE HOT SAUCE WARS</h2>
+            <h3>TABASCO TIKTOK LAUNCH</h3>
+            <p class="dek">Building a TikTok presence without the $200K launch plan.</p>
+            <p>We didn't launch TABASCO on TikTok with a campaign. We launched it with a storyline, and let the internet write the next episode.</p>
+            <p>When TABASCO was considering TikTok, we were advised that a proper launch would require a $200K+ paid investment. Then a creator went viral for filling a tiny TABASCO bottle with Frank's RedHot, and I saw another way in.</p>
+            <p>I developed a reactive strategy built around moves and countermoves designed to provoke the next chapter. We reacted to the creator. She reacted to us. Frank's joined in. Soon, a single TikTok had become an episodic, audience-driven brand rivalry.</p>
+            <p>To sell the idea into the client, I built a decision tree mapping our potential moves and predicting how the creator would react to each one. She followed the tree with <strong>75% accuracy.</strong> That approach became what HUNTER now calls the <strong>"Breadcrumbing Strategy"</strong>: anticipating reactions without scripting them, then leaving just enough behind to inspire the internet's next move.</p>
+            <p>When the creator compared TABASCO and Frank's fighting for her affection to Twilight, we leaned in, changing our social identity, sending increasingly elaborate gifts and surprises, throwing her a TABASCO-themed party, and adapting our next move based on what happened online.</p>
+            <div class="stats">
+              <div class="stat"><b>20M+</b><span>ORGANIC VIEWS</span></div>
+              <div class="stat"><b>30+</b><span>VIDEOS</span></div>
+              <div class="stat"><b>100K+</b><span>FOLLOWERS YR 1</span></div>
+              <div class="stat"><b>$0</b><span>PAID SPEND</span></div>
+            </div>
+            <p>The Breadcrumbing Strategy became a reactive social framework HUNTER continued using long after the war ended.</p>
+
+            <h2>BEAT THE HEAT — GUAC SERVE</h2>
+            <h3>TABASCO</h3>
+            <p class="dek">What if the best way to cool down was to heat things up?</p>
+            <p>The campaign started with a cultural contradiction: some of the hottest countries in the world also eat some of the spiciest food. I developed a theory around the biology behind it, that spicy food makes you sweat, and sweat helps cool your body down.</p>
+            <p>That became <strong>"Beat the Heat,"</strong> a summer platform encouraging people to cool down by eating TABASCO.</p>
+            <p>To bring the idea to life, we once again used our Breadcrumbing Strategy, partnering with viral ice cream creator Catch'n Ice Cream, known for inventing unexpected flavors. Rather than simply paying him to unveil a TABASCO product, we planted the seed of making spicy ice cream and built a story around his attempts to get it right.</p>
+            <p>After a series of trial-and-error videos, the storyline brought him to the home of TABASCO itself, where he learned from the experts and tried the jalapeño ice cream made on Avery Island.</p>
+            <p>Armed with some newfound spice expertise, he returned home and created <strong>Guac Serve</strong>: a guacamole-inspired ice cream built to Beat the Heat.</p>
+            <p>We launched it through a collaborative pop-up that drew lines around the block, turning an unexpected biological insight into a physical product, and a social storyline people could follow from first experiment to first scoop.</p>
+
+            <h2>BENJAMIN MOORE MATCH</h2>
+            <h3>BENJAMIN MOORE</h3>
+            <p class="dek">Turning a TikTok behavior into a paint discovery tool.</p>
+            <p>Color analysis had become a massive social trend, with people discovering whether they were a Winter, Spring, Summer, or Fall, and even heading into hardware stores to compare themselves against paint swatches.</p>
+            <p>Instead of simply participating in the trend, we turned the behavior into a Benjamin Moore property.</p>
+            <p>I developed <strong>Benjamin Moore Match</strong>, a social series that paired consumers with a professional color analyst to determine their color season and then matched those results to Benjamin Moore paint colors. We surrounded the idea with a broader 360° social content flight designed to make paint education feel native to the way people consume content today, from educational short-form videos highlighting paint quality to highly tactile macro photography and ASMR-inspired content.</p>
+            <p>The result was a social approach that connected product education to existing cultural behaviors rather than asking audiences to suddenly care about paint.</p>
+          </section>
+
+          <!-- ══ CH 02 — ACD + HEAD OF CONTENT ══ -->
+          <section class="page" data-ch="2">
+            <div class="kicker">CH 02 — ACD + HEAD OF CONTENT</div>
+            <h1>HUNTER<br>CONTENT STUDIO</h1>
+            <p class="dek">Building an in-house content engine, and getting behind the camera when necessary.</p>
+            <p>At Hunter, I led the agency's first dedicated Content Studio, creating a more agile way to concept, produce, and execute creative across the agency's roster of brands.</p>
+            <p>The studio operated across the entire content ecosystem: organic social, paid media, OOH, corporate and LinkedIn content, reactive creative, campaign extensions, and original productions. Projects included a comedic Mucinex spot featuring Olympian Jack Hughes, an International Delight content flight starring Paris Hilton, and the TABASCO x Tinx hot sauce dressing launch, alongside numerous other projects spanning paid, organic, and out-of-home.</p>
+            <p>My role intentionally crossed disciplines. Depending on the project, I could move from strategist to creative lead to art director to director, and when the idea called for it, pick up the camera and shoot or edit the content myself.</p>
+            <p>The goal was simple: build a studio capable of moving at the speed of culture without sacrificing the thinking or craft behind the work.</p>
+          </section>
+
+          <!-- ══ CH 03 — PERSONAL HITS ══ -->
+          <section class="page" data-ch="3">
+            <div class="kicker">CH 03 — PERSONAL HITS</div>
+            <h1>RJ, THE VIRAL<br>TIKTOK CREATOR</h1>
+            <p class="dek">I couldn't find a job during COVID. So I turned finding one into a campaign.</p>
+            <p>In 2020, I was looking for work in an almost impossible job market. Rather than sending applications into the void, I decided to treat my own job search like a PR campaign.</p>
+            <p>I launched a TikTok series called <strong>Unsolicited PR Advice</strong>, where I used my PR background to create mock strategies responding to corporate crises, cultural moments, and social media events, before everyone else started doing it. I supplemented the series with occasional lifestyle content and used the account as a real-time demonstration of how I thought about brands, culture, and the internet.</p>
+            <div class="stats">
+              <div class="stat"><b>300K+</b><span>FOLLOWERS</span></div>
+              <div class="stat"><b>6 MO</b><span>TO BUILD</span></div>
+              <div class="stat"><b>3</b><span>JOB OFFERS</span></div>
+            </div>
+            <p>Within six months, I built an audience of more than 300,000 followers.</p>
+            <p>More importantly, the campaign did exactly what it was designed to do. It turned my job search into proof of my ability, eventually leading to three job offers. I chose Hunter PR, where I became the agency's first Content Strategist.</p>
+          </section>
+
+          <!-- ══ CH 04 — HOUDINI MUSEUM ══ -->
+          <section class="page" data-ch="4">
+            <div class="kicker">CH 04 — THE HOUDINI MUSEUM</div>
+            <h1>I PROMISED HIM<br>THE NEW YORK TIMES</h1>
+            <p class="dek">Then I had to figure out how.</p>
+            <p>In 2019, I was offered the role of PR Director for the Houdini Museum of New York, a tiny museum with an incredible story, but very little public awareness.</p>
+            <p>During my interview, I told the owner I would get the museum into The New York Times. He took a chance and hired me.</p>
+            <p>I needed a story journalists would actually care about, so I found one hiding in plain sight: me. By coincidence, I came from the same town as Harry Houdini, and I was a magician myself. I turned that connection into a compelling headline and spent two months relentlessly pitching the story.</p>
+            <p><strong>Our first bite was The New York Times.</strong></p>
+            <div class="stats">
+              <div class="stat"><b>500%</b><span>REVENUE GROWTH</span></div>
+              <div class="stat"><b>#1 HIT</b><span>THE NY TIMES</span></div>
+            </div>
+            <p>Following the article, museum revenue increased by 500%, and I leveraged that momentum into additional coverage from Complex, History Channel, AM New York, FOX, and Rolling Stone.</p>
+            <p>It became an early lesson that has followed me throughout my career: sometimes the story isn't obvious. You have to find the through-line, make people care, and pitch the hell out of it.</p>
+          </section>
+
+          <!-- ══ CH 05 — NYT TO NETFLIX ══ -->
+          <section class="page" data-ch="5">
+            <div class="kicker">CH 05 — 2020</div>
+            <h1>FROM A NY TIMES<br>ARTICLE TO A<br>NETFLIX PILOT</h1>
+            <p class="dek">One piece of earned media unexpectedly turned into a three-year journey toward television.</p>
+            <p>After seeing my New York Times story, production company Karga approached me about developing a television show. I pitched a concept exploring the history and world of magic through the lens of my own life, and together we began taking the project to networks and streamers ranging from MTV to Netflix.</p>
+            <p>Netflix ultimately gave me the extraordinary opportunity to produce a pilot, an unusual leap for someone completely new to television production. What followed was a nearly three-year process of writing, developing, producing, pitching, and learning an entirely new industry from the inside.</p>
+            <p>The project ultimately wasn't picked up for series, but it unexpectedly influenced the next stage of my career.</p>
+            <p>While negotiating around the project, I was told that building a social following could strengthen my position as on-camera talent. So I approached the problem the way I knew how: like a PR strategist.</p>
+            <p><strong>I started building an audience.</strong></p>
+            <p>That decision eventually became my 300K+ TikTok platform, helped launch my career in social strategy, and fundamentally changed the direction of my career.</p>
+          </section>
+
+          <!-- ══ CH 06 — TRADITIONAL PR ══ -->
+          <section class="page" data-ch="6">
+            <div class="kicker">CH 06 — TRADITIONAL PR</div>
+            <h1>NONPROFIT PR</h1>
+            <p class="dek">Where I learned how to find the story before I had big budgets or big brands.</p>
+            <p>Early in my career, I worked in communications and PR roles supporting nonprofit organizations including Make-A-Wish, The Salvation Army, and a local homeless shelter.</p>
+            <p>With limited resources, earned attention mattered. I built and worked my media lists, developed stories journalists could actually use, secured local coverage, and served as an official spokesperson during television appearances.</p>
+            <p>That experience became foundational to the way I still approach creative strategy today: understand what makes a story interesting, find the human truth inside it, and give people a reason to pay attention.</p>
+          </section>
+
+          <!-- ══ CH 07 — SOCIAL CREATIVE ══ -->
+          <section class="page" data-ch="7">
+            <div class="kicker">CH 07 — SOCIAL CREATIVE</div>
+            <h1>CRISPIN PORTER<br>+ BOGUSKY</h1>
+            <p class="dek">Bringing a social-first mindset to one of advertising's most iconic creative agencies.</p>
+            <p>At Crispin Porter + Bogusky, I was hired to lead social across three major accounts: <strong>Pantene, P&amp;G Easy Ups, and DSW.</strong></p>
+            <p>My focus was developing platform-native short-form creative that could work across both organic and paid social, while building repeatable series and formats rather than simply adapting traditional advertising for feeds.</p>
+            <p>For <strong>DSW</strong>, I helped lead the brand's social rebrand and developed original series including <strong>$111 Haul</strong> and <strong>Dress From the Sole</strong>, giving the brand recognizable formats designed specifically for social.</p>
+            <p>For <strong>Pantene</strong>, I developed custom social-first series and content designed around the behaviors and formats audiences were already engaging with.</p>
+            <p>And for <strong>P&amp;G Easy Ups</strong>, I helped launch the brand's Instagram presence, working with popular parent creators to produce paid creative that could be transformed into organic cutdowns and extended across the social ecosystem.</p>
+            <p>Across all three accounts, the goal was the same: create work built for the platform first, rather than advertising that happened to end up there.</p>
+          </section>
+
+        </div>
+
+        <div class="ticker"><span>▸ SRIRACHA-SHORTAGE.COM — A $12 DOMAIN THAT MADE TABASCO #1 FOR TWO YEARS ▸ THE HOT SAUCE WARS — 20M+ ORGANIC VIEWS, ZERO PAID ▸ THE BREADCRUMBING STRATEGY ▸ GUAC SERVE — LINES AROUND THE BLOCK ▸ HOUDINI MUSEUM — 500% REVENUE GROWTH ▸ 300K FOLLOWERS FROM ZERO ▸</span></div>
+        <div class="chnum" id="chnum">CH 00</div>
+      </div>
+
+      <div class="roll"></div>
+      <div class="snow" id="snow"></div>
+      <div class="crt lines"></div>
+      <div class="crt grade"></div>
+      <div class="crt bloom"></div>
+      <div class="crt glass"></div>
+    </div>
+  </div>
+</div>
+
+<div class="cta" id="cta"><div class="ring"></div><p>CLICK THE TV</p></div>
+<button class="back" id="back">← ROOM VIEW</button>
+
+<div class="hud">
+  <div class="remote" id="remote">
+    <button class="btn live" data-go="0"><b>00</b>HOME</button>
+    <button class="btn" data-go="1"><b>01</b>STRATEGY</button>
+    <button class="btn" data-go="2"><b>02</b>ACD</button>
+    <button class="btn" data-go="3"><b>03</b>PERSONAL</button>
+    <button class="btn" data-go="4"><b>04</b>HOUDINI</button>
+    <button class="btn" data-go="5"><b>05</b>NETFLIX</button>
+    <button class="btn" data-go="6"><b>06</b>PR</button>
+    <button class="btn" data-go="7"><b>07</b>CRISPIN</button>
+  </div>
+</div>
+<div class="hint">ARROWS OR 0–7 TO CHANGE CHANNEL · ESC FOR ROOM VIEW</div>
+
+<div class="vig"></div>
+<div class="grain"></div>
+
+<script>
+(function(){
+  const stage=document.getElementById('stage'),
+        scene=document.getElementById('scene'),
+        plate=document.getElementById('plate'),
+        screenEl=document.getElementById('screen'),
+        vscreen=document.getElementById('vscreen'),
+        vpad=document.getElementById('vpad'),
+        snow=document.getElementById('snow'),
+        chnum=document.getElementById('chnum'),
+        remote=document.getElementById('remote'),
+        cta=document.getElementById('cta'),
+        back=document.getElementById('back'),
+        pages=document.querySelectorAll('.page'),
+        btns=document.querySelectorAll('[data-go]');
+
+  const VW=720, CH=[0,1,2,3,4,5,6,7];
+  let cur=0, busy=false, zoomed=false, t;
+
+  function layout(){
+    const sw=stage.clientWidth, sh=stage.clientHeight;
+    const ar=(plate.naturalWidth||858)/(plate.naturalHeight||776);
+    let w=sw, h=sw/ar;
+    if(h<sh){h=sh;w=sh*ar;}
+    plate.style.width=w+'px'; plate.style.height=h+'px';
+    scene.style.width=w+'px'; scene.style.height=h+'px';
+    vscreen.style.transform='scale('+((w*0.1911)/VW)+')';
+  }
+  plate.complete?layout():plate.addEventListener('load',layout);
+  addEventListener('resize',layout);
+
+  function setZoom(on){
+    zoomed=on;
+    scene.classList.toggle('zoomed',on);
+    remote.classList.toggle('in',on);
+    back.classList.toggle('in',on);
+    cta.classList.toggle('gone',on);
+  }
+
+  function tune(ch){
+    if(busy||!CH.includes(ch))return;
+    if(!zoomed) setZoom(true);
+    if(ch===cur)return;
+    busy=true;
+    snow.classList.remove('on'); void snow.offsetWidth; snow.classList.add('on');
+    setTimeout(()=>{
+      pages.forEach(p=>p.classList.toggle('live',+p.dataset.ch===ch));
+      btns.forEach(b=>b.classList.toggle('live',+b.dataset.go===ch));
+      vpad.scrollTop=0;
+      cur=ch;
+      chnum.textContent='CH '+String(ch).padStart(2,'0');
+      chnum.classList.add('show');
+      clearTimeout(t); t=setTimeout(()=>chnum.classList.remove('show'),1400);
+      busy=false;
+    },150);
+  }
+  const step=d=>tune(CH[(CH.indexOf(cur)+d+CH.length)%CH.length]);
+
+  screenEl.addEventListener('click',e=>{ if(zoomed) return; setZoom(true); });
+  back.addEventListener('click',()=>setZoom(false));
+  btns.forEach(b=>b.addEventListener('click',()=>tune(+b.dataset.go)));
+  addEventListener('keydown',e=>{
+    if(e.key==='Escape')setZoom(false);
+    if(e.key==='ArrowRight'){e.preventDefault();step(1)}
+    if(e.key==='ArrowLeft'){e.preventDefault();step(-1)}
+    const n=parseInt(e.key,10);
+    if(!isNaN(n)&&CH.includes(n))tune(n);
+  });
+
+  setTimeout(()=>{ if(!zoomed) setZoom(true); }, 2600);
+})();
+</script>
+</body>
+</html>

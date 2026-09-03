@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RJ Lynch — Channel Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap');
+
+:root{
+  --ink:#3a2418;
+  --ink-soft:#6d5138;
+  --accent:#d96a2c;
+  --accent-2:#3f7f96;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#1a1210;
+  display:flex;align-items:center;justify-content:center;
+  padding:5vh 20px;overflow-x:hidden;position:relative;
+}
+
+/* ══════════════ ROOM SHELL ══════════════ */
+.room{position:fixed;inset:0;z-index:0;overflow:hidden;background:#c99a72}
+
+/* back wall — warm, sun-washed toward upper right */
+.wall{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 74% 22%, rgba(255,233,192,.95) 0%, rgba(255,214,163,.45) 38%, transparent 68%),
+    radial-gradient(ellipse 120% 90% at 20% 95%, rgba(120,72,44,.55) 0%, transparent 60%),
+    linear-gradient(165deg,#f0d0a6 0%, #e3ba91 40%, #c99a72 72%, #a87753 100%);
+}
+/* plaster texture */
+.wall::before{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  opacity:.19;mix-blend-mode:overlay;
+}
+/* ambient occlusion where walls meet */
+.wall::after{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(to right, rgba(90,52,30,.35) 0%, transparent 14%),
+    linear-gradient(to top, rgba(80,45,26,.42) 0%, transparent 22%),
+    linear-gradient(to bottom, rgba(90,52,30,.28) 0%, transparent 12%);
+}
+
+/* ceiling plane */
+.ceiling{
+  position:absolute;top:0;left:0;right:0;height:14%;
+  background:linear-gradient(to bottom,#fbe6c8 0%, #eed3ad 55%, rgba(224,190,152,.35) 100%);
+  box-shadow:0 4px 18px rgba(120,72,44,.28);
+}
+.ceiling::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(to right,rgba(140,92,58,.5),rgba(180,130,90,.25));
+}
+
+/* floor plane with perspective */
+.floor{
+  position:absolute;bottom:0;left:0;right:0;height:26%;
+  background:
+    linear-gradient(to bottom, rgba(150,98,62,.9) 0%, #7d4f31 45%, #5c3a23 100%);
+  box-shadow:inset 0 14px 34px rgba(50,28,16,.6);
+}
+.floor::before{
+  content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(92deg, rgba(255,220,175,.055) 0 3px, transparent 3px 26px);
+}
+/* pooled sunlight on the floor */
+.floor::after{
+  content:'';position:absolute;top:0;left:8%;width:62%;height:100%;
+  background:radial-gradient(ellipse 60% 90% at 40% 10%, rgba(255,214,158,.5), transparent 70%);
+  filter:blur(14px);
+}
+
+/* ══════════════ WINDOW + BLINDS ══════════════ */
+.window{
+  position:absolute;top:4%;left:-2%;width:33%;height:80%;z-index:3;
+  filter:drop-shadow(18px 10px 40px rgba(150,96,58,.45));
+}
+/* blown-out daylight behind slats */
+.window::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 40% 40%, #fffaf0 0%, #ffe9c4 45%, #f6cf9c 100%);
+}
+/* individual slats with real shading */
+.slats{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,
+    rgba(255,252,244,.97) 0 4px,
+    rgba(248,236,214,.94) 4px 17px,
+    rgba(214,180,142,.9) 17px 21px,
+    rgba(160,120,86,.55) 21px 24px);
+  animation:sway 13s ease-in-out infinite;transform-origin:top center;
+}
+@keyframes sway{0%,100%{transform:skewX(0)}50%{transform:skewX(.5deg)}}
+/* soft glow bleeding off the window edge */
+.windowglow{
+  position:absolute;top:0;left:26%;width:26%;height:88%;z-index:2;
+  background:linear-gradient(to right, rgba(255,240,205,.85), transparent);
+  filter:blur(38px);
+}
+
+/* light bars cast across the wall, angled with perspective */
+.cast{
+  position:absolute;top:-8%;left:22%;right:-10%;height:104%;z-index:2;
+  background:repeating-linear-gradient(93deg,
+    rgba(255,226,172,.72) 0 20px,
+    rgba(255,214,155,.16) 20px 30px,
+    transparent 30px 64px);
+  transform:skewX(-7deg) rotate(1.5deg);
+  mix-blend-mode:soft-light;
+  filter:blur(1.5px);
+  animation:sway 13s ease-in-out infinite;
+  -webkit-mask-image:radial-gradient(ellipse 85% 80% at 25% 35%, #000 20%, transparent 78%);
+          mask-image:radial-gradient(ellipse 85% 80% at 25% 35%, #000 20%, transparent 78%);
+}
+.cast.soft{
+  filter:blur(9px);opacity:.6;left:18%;
+  background:repeating-linear-gradient(93deg, rgba(255,235,192,.6) 0 26px, transparent 26px 72px);
+  animation-duration:17s;
+}
+
+/* atmospheric haze */
+.haze{
+  position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 55% 30%, rgba(255,224,180,.22), transparent 70%);
+  filter:blur(30px);
+}
+
+/* dust motes */
+.motes{position:absolute;inset:0;z-index:5;pointer-events:none}
+.mote{position:absolute;border-radius:50%;background:rgba(255,248,230,.95);
+  box-shadow:0 0 7px rgba(255,240,205,.95);animation:drift linear infinite}
+@keyframes drift{
+  0%{transform:translate(0,0);opacity:0}
+  12%{opacity:.9}88%{opacity:.5}
+  100%{transform:translate(46px,-170px);opacity:0}
+}
+
+/* framed poster */
+.poster{
+  position:absolute;top:15%;right:10%;z-index:4;width:138px;height:176px;
+  border:10px solid;border-image:linear-gradient(150deg,#c8935c,#8a5c33) 1;
+  background:linear-gradient(165deg,#eaba88,#c9855a);
+  box-shadow:0 18px 34px rgba(80,46,24,.5), inset 0 0 26px rgba(110,62,30,.35);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  transform:rotate(-.8deg);
+}
+.poster::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(118deg, rgba(255,255,255,.42) 0%, transparent 42%);
+}
+.poster b{font-family:'VT323',monospace;font-size:24px;letter-spacing:2px;color:#5a3418;line-height:1;text-align:center}
+.poster span{font-size:7.5px;letter-spacing:2.4px;color:#7d5028}
+
+.shelf{position:absolute;top:27%;right:3%;z-index:4;width:80px;height:10px;
+  background:linear-gradient(to bottom,#a06c40,#7a4f2c);border-radius:2px;
+  box-shadow:0 10px 20px rgba(80,46,24,.45)}
+.bear{position:absolute;top:calc(27% - 28px);right:5.2%;z-index:4;width:36px;height:32px;
+  background:radial-gradient(circle at 34% 30%,#dba473,#a9744a);border-radius:46% 46% 40% 40%;
+  box-shadow:inset -5px -5px 10px rgba(120,74,38,.55), 0 6px 12px rgba(80,46,24,.35)}
+.bear::before,.bear::after{content:'';position:absolute;top:-7px;width:14px;height:14px;
+  background:radial-gradient(circle at 35% 30%,#dba473,#a9744a);border-radius:50%}
+.bear::before{left:-1px}.bear::after{right:-1px}
+
+/* film grain over everything */
+.grain{
+  position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.15;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation:grainmove .5s steps(3) infinite;
+}
+@keyframes grainmove{
+  0%{transform:translate(0,0)}33%{transform:translate(-3px,2px)}66%{transform:translate(2px,-2px)}100%{transform:translate(0,0)}
+}
+/* global vignette */
+.vig{position:fixed;inset:0;z-index:58;pointer-events:none;
+  background:radial-gradient(ellipse 78% 70% at 50% 45%, transparent 40%, rgba(45,24,12,.55) 100%)}
+
+@media(max-width:900px){
+  .poster,.shelf,.bear{display:none}
+  .window{width:19%;opacity:.85}
+}
+
+/* ══════════════ TV SET ══════════════ */
+.setup{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center}
+
+/* light the TV throws back onto the room */
+.spill{
+  position:absolute;top:-6%;left:50%;transform:translateX(-50%);
+  width:150%;height:130%;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 50% 42% at 50% 34%, rgba(168,216,232,.38), transparent 68%);
+  filter:blur(46px);
+  animation:glowpulse 6s ease-in-out infinite;
+}
+@keyframes glowpulse{0%,100%{opacity:.85}50%{opacity:1}}
+
+.tv{
+  position:relative;width:min(740px,92vw);
+  border-radius:26px 26px 12px 12px;
+  padding:20px 20px 14px;
+  background:
+    linear-gradient(103deg, rgba(255,244,224,.6) 0%, transparent 34%),
+    linear-gradient(170deg,#cfc7ba 0%, #b0a89c 44%, #8a8177 78%, #6e665d 100%);
+  box-shadow:
+    inset 0 2px 1px rgba(255,255,255,.75),
+    inset 0 -5px 16px rgba(50,30,16,.42),
+    inset 3px 0 8px rgba(255,240,215,.3),
+    0 3px 0 rgba(70,44,26,.5),
+    0 40px 70px -22px rgba(50,28,14,.78),
+    0 90px 60px -50px rgba(40,22,10,.6);
+}
+/* mold seam */
+.tv::after{
+  content:'';position:absolute;left:12px;right:12px;top:52%;height:1px;
+  background:linear-gradient(to right,transparent,rgba(70,44,26,.18) 20%,rgba(70,44,26,.18) 80%,transparent);
+  pointer-events:none;
+}
+
+.tvtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;padding:0 8px}
+.brandplate{
+  font-family:'VT323',monospace;font-size:16px;letter-spacing:3.5px;color:#6b6259;
+  text-shadow:0 1px 0 rgba(255,255,255,.55);
+}
+.led{display:flex;align-items:center;gap:7px;font-size:7.5px;letter-spacing:2px;color:#7b7268;
+  text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.led i{width:7px;height:7px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#9dffb8,#3fbd60);
+  box-shadow:0 0 10px #5ed17a,0 0 3px #fff inset;animation:blink 2.6s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.45}}
+
+.bezel{
+  position:relative;background:linear-gradient(160deg,#3a322c,#1e1815);
+  border-radius:18px;padding:14px;
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,.75),
+    inset 0 -1px 0 rgba(255,255,255,.09),
+    0 1px 0 rgba(255,255,255,.35);
+}
+.screen{
+  position:relative;aspect-ratio:4/3;border-radius:13px;overflow:hidden;
+  background:linear-gradient(to bottom,#b6dfec 0%, #d8ecf0 44%, #f7e4c6 100%);
+  box-shadow:inset 0 0 50px rgba(70,45,25,.34), inset 0 0 12px rgba(0,0,0,.35);
+}
+/* CRT curvature + glass reflection of the window */
+.screen::after{
+  content:'';position:absolute;inset:0;z-index:42;pointer-events:none;border-radius:13px;
+  background:
+    repeating-linear-gradient(93deg, rgba(255,255,255,.13) 0 9px, transparent 9px 26px) 0 0/100% 46% no-repeat,
+    linear-gradient(124deg, rgba(255,255,255,.4) 0%, rgba(255,255,255,.07) 20%, transparent 44%),
+    radial-gradient(ellipse at center, transparent 54%, rgba(45,26,14,.42) 100%);
+}
+.scan{position:absolute;inset:0;z-index:34;pointer-events:none;
+  background:repeating-linear-gradient(to bottom, rgba(80,52,32,.13) 0 1px, transparent 1px 3px)}
+.roll{position:absolute;left:0;right:0;height:80px;z-index:33;pointer-events:none;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.16),transparent);
+  animation:rolldown 9s linear infinite}
+@keyframes rolldown{from{top:-80px}to{top:100%}}
+
+.static{position:absolute;inset:0;z-index:38;opacity:0;pointer-events:none;
+  background-image:repeating-conic-gradient(#fff 0% .0006%, #4a3524 .0006% .0012%);
+  background-size:150px 150px}
+.static.on{animation:snow .3s steps(4) 1}
+@keyframes snow{
+  0%{opacity:.85;background-position:0 0}
+  40%{opacity:.6;background-position:50px -30px}
+  75%{opacity:.35;background-position:-22px 40px}
+  100%{opacity:0}
+}
+
+.feed{position:absolute;inset:0;z-index:20;padding:30px 34px 44px;overflow-y:auto;color:var(--ink)}
+.feed::-webkit-scrollbar{width:6px}
+.feed::-webkit-scrollbar-thumb{background:rgba(110,80,55,.35);border-radius:4px}
+
+.page{display:none;animation:tune .4s ease-out both}
+.page.live{display:block}
+@keyframes tune{0%{opacity:0;transform:scaleY(.5);filter:blur(2px)}100%{opacity:1;transform:none;filter:none}}
+
+.kicker{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:2.4px;color:#fff;
+  background:var(--accent);padding:4px 9px;border-radius:3px;margin-bottom:11px;
+  box-shadow:0 2px 5px rgba(120,60,20,.3)}
+h1{font-family:'VT323',monospace;font-size:clamp(32px,5vw,54px);line-height:.94;letter-spacing:.5px;
+  color:var(--ink);margin-bottom:12px;text-shadow:1.5px 1.5px 0 rgba(255,255,255,.45)}
+h2{font-family:'VT323',monospace;font-size:24px;letter-spacing:1.5px;color:var(--accent-2);margin:20px 0 7px}
+p{font-size:12.5px;line-height:1.72;margin-bottom:11px;max-width:60ch;color:var(--ink-soft)}
+strong{color:var(--ink);font-weight:700}
+em{font-style:italic;color:var(--ink)}
+
+.stats{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}
+.stat{background:rgba(255,255,255,.52);border:1px solid rgba(160,116,80,.28);border-radius:6px;
+  padding:8px 12px;min-width:98px;box-shadow:0 1px 3px rgba(120,80,45,.12)}
+.stat b{display:block;font-family:'VT323',monospace;font-size:26px;color:var(--accent);line-height:1}
+.stat span{font-size:7.5px;letter-spacing:1.5px;color:var(--ink-soft);font-weight:500}
+
+ul{list-style:none;margin:9px 0 4px}
+li{font-size:12.5px;line-height:1.68;padding-left:18px;position:relative;margin-bottom:6px;
+  color:var(--ink-soft);max-width:60ch}
+li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
+
+.ticker{position:absolute;left:0;right:0;bottom:0;z-index:30;background:rgba(58,36,24,.88);
+  padding:6px 0;overflow:hidden;white-space:nowrap}
+.ticker span{display:inline-block;font-size:9px;letter-spacing:2px;color:#f7e4c6;
+  animation:slide 30s linear infinite}
+@keyframes slide{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+
+.chnum{position:absolute;top:16px;right:20px;z-index:36;font-family:'VT323',monospace;
+  font-size:32px;color:#fff;text-shadow:2px 2px 0 rgba(58,36,24,.6);opacity:0;transition:opacity .25s}
+.chnum.show{opacity:1}
+
+.controls{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:0 10px}
+.knobs{display:flex;gap:14px}
+.knob{width:38px;height:38px;border-radius:50%;position:relative;cursor:pointer;transition:transform .3s;
+  background:radial-gradient(circle at 34% 28%,#eae3d6,#a89f93 62%,#7d7469);
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.7),inset 0 -3px 5px rgba(60,38,20,.35),0 4px 8px rgba(60,36,18,.45)}
+.knob::after{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);
+  width:3px;height:11px;background:#4a3a2c;border-radius:2px}
+.knob:hover{transform:rotate(32deg)}
+/* speaker grille — perforated */
+.grille{width:118px;height:26px;border-radius:4px;
+  background-image:radial-gradient(circle,rgba(60,38,20,.45) 1px, transparent 1.4px);
+  background-size:6px 6px;
+  box-shadow:inset 0 1px 2px rgba(60,38,20,.3)}
+
+/* ══════════════ CONSOLE ══════════════ */
+.console{
+  width:min(690px,88vw);
+  background:
+    linear-gradient(101deg, rgba(255,236,205,.28) 0%, transparent 32%),
+    linear-gradient(172deg,#4e392c 0%,#33251c 60%,#241a13 100%);
+  border-radius:0 0 10px 10px;padding:15px 22px 20px;
+  box-shadow:0 32px 48px -16px rgba(45,24,12,.75), inset 0 2px 0 rgba(255,220,180,.16);
+}
+.slot{height:26px;background:linear-gradient(to bottom,#1b120d,#251a12);border-radius:4px;
+  margin-bottom:9px;box-shadow:inset 0 3px 8px rgba(0,0,0,.85), 0 1px 0 rgba(255,220,180,.1);
+  display:flex;align-items:center;padding:0 12px;gap:7px}
+.slot .tape{margin-right:auto;font-family:'VT323',monospace;font-size:11px;letter-spacing:2px;color:#7d6349}
+.slot i{width:5px;height:5px;border-radius:50%;background:#6e5540}
+.slot i.grn{background:#5ed17a;box-shadow:0 0 8px #5ed17a}
+
+/* ══════════════ REMOTE ══════════════ */
+.remote{position:relative;z-index:10;margin-top:26px;width:min(560px,92vw);
+  border-radius:16px;padding:16px 18px;
+  background:linear-gradient(101deg, rgba(255,236,205,.22) 0%, transparent 30%),
+             linear-gradient(168deg,#54402f,#2c2019);
+  box-shadow:0 24px 40px -14px rgba(45,24,12,.75), inset 0 2px 0 rgba(255,220,180,.18)}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.btn{font-size:8.5px;font-weight:500;letter-spacing:.5px;padding:10px 3px;border:none;
+  border-radius:7px;cursor:pointer;line-height:1.2;transition:.13s;color:#4a3527;
+  background:linear-gradient(165deg,#e3dacd,#ab9f8e);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 3px 5px rgba(30,16,8,.45)}
+.btn b{display:block;font-family:'VT323',monospace;font-size:16px;color:var(--accent)}
+.btn:hover{transform:translateY(-1px);background:linear-gradient(165deg,#f0e8dc,#b8ac9a)}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(0,0,0,.4)}
+.btn.live{background:linear-gradient(165deg,#e88541,#c05620);color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 0 16px rgba(217,106,44,.55)}
+.btn.live b{color:#ffe9d6}
+.hint{margin-top:11px;font-size:7.5px;letter-spacing:1.4px;color:#a08e79;text-align:center}
+
+@media(max-width:600px){.pad{grid-template-columns:repeat(3,1fr)}.feed{padding:22px 20px 40px}}
+</style>
+</head>
+<body>
+
+<div class="room">
+  <div class="wall"></div>
+  <div class="ceiling"></div>
+  <div class="cast soft"></div>
+  <div class="cast"></div>
+  <div class="windowglow"></div>
+  <div class="window"><div class="slats"></div></div>
+  <div class="floor"></div>
+  <div class="poster"><b>CLOSED<br>FOR<br>REPAIRS</b><span>EST. 1926</span></div>
+  <div class="shelf"></div>
+  <div class="bear"></div>
+  <div class="haze"></div>
+  <div class="motes" id="motes"></div>
+</div>
+
+<div class="setup">
+  <div class="spill"></div>
+
+  <div class="tv">
+    <div class="tvtop">
+      <div class="brandplate">LYNCHTRON</div>
+      <div class="led"><i></i>POWER</div>
+    </div>
+
+    <div class="bezel">
+      <div class="screen">
+        <div class="static" id="static"></div>
+        <div class="scan"></div>
+        <div class="roll"></div>
+        <div class="chnum" id="chnum">CH 02</div>
+
+        <div class="feed" id="feed">
+
+          <section class="page live" data-ch="2">
+            <div class="kicker">CH 02 — NOW PLAYING</div>
+            <h1>RJ LYNCH<br>CREATIVE DIRECTOR</h1>
+            <p>Fifty percent art. Fifty percent copy. One hundred percent social. Classically trained in PR with the instincts of a viral creator, currently running an in-house content studio in New York.</p>
+            <div class="stats">
+              <div class="stat"><b>800K+</b><span>DEPT REVENUE</span></div>
+              <div class="stat"><b>4</b><span>INDUSTRY AWARDS</span></div>
+              <div class="stat"><b>110M+</b><span>CONTENT VIEWS</span></div>
+              <div class="stat"><b>250K</b><span>OWN FOLLOWING</span></div>
+            </div>
+            <h2>TONIGHT'S LINEUP</h2>
+            <ul>
+              <li><strong>CH 03</strong> — Tabasco: the TikTok launch that changed a category</li>
+              <li><strong>CH 04</strong> — Crispin: serialized social for DSW &amp; Pantene</li>
+              <li><strong>CH 05</strong> — Netflix: selling an original pilot</li>
+              <li><strong>CH 06</strong> — The Houdini job: how to get in the NYT</li>
+              <li><strong>CH 07</strong> — Creator mode: 250K followers from scratch</li>
+              <li><strong>CH 08</strong> — Contact &amp; booking</li>
+            </ul>
+          </section>
+
+          <section class="page" data-ch="3">
+            <div class="kicker">CH 03 — HUNTER / TABASCO</div>
+            <h1>THE HOT SAUCE<br>THAT WENT VIRAL</h1>
+            <p>Hired as Hunter's first content strategist to revitalize a 150-year-old brand. One month in, community management surfaced a fan documenting her "hot sauce journey." Instead of liking the post, we built a strategy around it and launched TikTok inside the moment.</p>
+            <div class="stats">
+              <div class="stat"><b>50K</b><span>WEEK ONE</span></div>
+              <div class="stat"><b>100K</b><span>IN 3 MONTHS</span></div>
+              <div class="stat"><b>100M+</b><span>IMPRESSIONS</span></div>
+              <div class="stat"><b>#1</b><span>IN CATEGORY</span></div>
+            </div>
+            <h2>SRIRACHASHORTAGE.COM</h2>
+            <p>When a competitor hit a national stockout, we shipped a full response in days: a site that trolled the shortage and mapped where fans could actually find Tabasco Sriracha. It still earns press and SEO years later.</p>
+            <h2>THE BREADCRUMB STRATEGY</h2>
+            <p>A forecasting framework my team named. Map the possible payoff of a cultural play <em>before</em> launch, then follow the moment as it unfolds. Predicted outcomes at roughly <strong>75% accuracy</strong> and reused to escalate audience moments ever since.</p>
+            <ul>
+              <li>Tinx x Tabasco "hot sauce dressing" — 30K units, 10MM social, 50MM PR impressions</li>
+              <li>National Pizza Month — four photographers, Gen Z visual language, flooded the feed</li>
+              <li>Four awards: PRSA Bronze Anvil, Big Apple, PRWeek, PR News</li>
+            </ul>
+          </section>
+
+          <section class="page" data-ch="4">
+            <div class="kicker">CH 04 — CRISPIN PORTER + BOGUSKY</div>
+            <h1>SERIALIZED<br>SOCIAL</h1>
+            <p>Brought in as social lead across Pantene, Pampers and DSW at the legendary agency. The mandate: custom short-form built for organic growth and paid performance at the same time.</p>
+            <h2>OWNED FORMATS, NOT ONE-OFFS</h2>
+            <ul>
+              <li><strong>$111 Haul</strong> and <strong>Dress From The Sole</strong> — serialized DSW franchises that ran as real programming</li>
+              <li>Talent partnerships with <strong>Ariana Madix</strong> (Bravo) and <strong>Hallie Batchelder</strong> (Unwell Network)</li>
+              <li>Pantene in-house content series using UGC for reactive video in real time</li>
+              <li>P&amp;G Easy Ups launch — paid media content cut down for organic, featuring parent creators</li>
+            </ul>
+            <p>The DSW social rebrand helped win Crispin the brand's full business.</p>
+          </section>
+
+          <section class="page" data-ch="5">
+            <div class="kicker">CH 05 — NETFLIX</div>
+            <h1>SOLD A PILOT<br>TO NETFLIX</h1>
+            <p>A production company found me through the New York Times article and asked if I had a show in me. I pitched an exploration of the history of magic told through my own life. We took it out to everyone from MTV to Netflix.</p>
+            <div class="stats">
+              <div class="stat"><b>25+</b><span>CREW DIRECTED</span></div>
+              <div class="stat"><b>2 YRS</b><span>IN DEVELOPMENT</span></div>
+            </div>
+            <p>Netflix bought exclusive rights and let me produce the pilot, which is close to unheard of for a first-timer. They ultimately passed, so it never aired. I still walked away having storyboarded with an award-winning studio, pitched the biggest names in television, and worked both sides of the camera while the world was shut down.</p>
+            <h2>THE SIDE EFFECT</h2>
+            <p>During contract negotiations I was told a following would help my odds. So I made a TikTok, assuming it couldn't be that hard. That decision is the reason for channel 07.</p>
+          </section>
+
+          <section class="page" data-ch="6">
+            <div class="kicker">CH 06 — HOUDINI MUSEUM OF NEW YORK</div>
+            <h1>I PROMISED HIM<br>THE NY TIMES</h1>
+            <p>A tiny, very niche museum with almost no public interest. In the interview I told the owner I'd get him into the New York Times. He took the chance.</p>
+            <p>I happen to be from the same town as Houdini, and I'd performed magic to put myself through college, teaching across New York and even starting a program in China. So I wrote the headline, made myself the story, and pitched it relentlessly for two months.</p>
+            <div class="stats">
+              <div class="stat"><b>500%</b><span>REVENUE GROWTH</span></div>
+              <div class="stat"><b>#1 HIT</b><span>THE NY TIMES</span></div>
+            </div>
+            <p>After the Times ran it: Complex, Rolling Stone, AM New York, Fox NY, Smithsonian Channel and Time Out New York followed. I love social and strategy, but the actual superpower is seeing the story and knowing how to pitch it.</p>
+          </section>
+
+          <section class="page" data-ch="7">
+            <div class="kicker">CH 07 — CREATOR MODE</div>
+            <h1>250K FROM<br>SCRATCH</h1>
+            <p>I made a TikTok called <strong>"Unsolicited PR Advice"</strong> where I gave mock strategies for corporate crises, before everyone else started doing it. Millions of views. Six months later I had built a real audience.</p>
+            <div class="stats">
+              <div class="stat"><b>250K+</b><span>FOLLOWERS</span></div>
+              <div class="stat"><b>6 MO</b><span>TO BUILD</span></div>
+            </div>
+            <p>Then I used it to campaign for a job in the impossible COVID market, bringing followers along for the hunt. It worked. Offers came in from multiple firms and startups. A partner and the Director of Digital at Hunter found that account, and created a brand new position for me because of it.</p>
+            <ul>
+              <li>Featured in <strong>Daily Mail</strong> and <strong>LADbible</strong></li>
+              <li>Picked up by <strong>TikTok's official channels</strong></li>
+              <li>People started copying the job-hunt formula</li>
+            </ul>
+            <p>It's the least glamorous credential I have and the most useful one. I learned the algorithm by getting it wrong in public until I got it right.</p>
+          </section>
+
+          <section class="page" data-ch="8">
+            <div class="kicker">CH 08 — CONTACT</div>
+            <h1>LET'S TALK</h1>
+            <p>Available for creative direction, social strategy, and content leadership.</p>
+            <h2>DIRECT LINE</h2>
+            <ul>
+              <li>rajonlynch@gmail.com</li>
+              <li>(920) 297-0179</li>
+              <li>New York, NY</li>
+            </ul>
+            <h2>THE SHORT VERSION</h2>
+            <p>My path here was unconventional. When I got to New York I felt penalized for the same "diverse experience" hiring managers say they want. So I built the proof myself: a museum into the Times, a pilot to Netflix, a hot sauce into the number one condiment brand online, and an audience from zero.</p>
+            <p>I'm a creative, a storyteller and a strategist, and I've done it on one of the most prestigious accounts at one of the best firms in the world.</p>
+          </section>
+
+        </div>
+
+        <div class="ticker">
+          <span>▸ TABASCO TIKTOK LAUNCH — 4 INDUSTRY AWARDS ▸ SRIRACHASHORTAGE.COM — STILL EARNING PRESS ▸ ORIGINAL PILOT SOLD TO NETFLIX ▸ HOUDINI MUSEUM — 500% REVENUE GROWTH ▸ 250K FOLLOWERS BUILT FROM ZERO ▸ NOW ACCEPTING NEW TRANSMISSIONS ▸</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="knobs">
+        <div class="knob" id="knobA" title="Channel up"></div>
+        <div class="knob" id="knobB" title="Channel down"></div>
+      </div>
+      <div class="grille"></div>
+    </div>
+  </div>
+
+  <div class="console">
+    <div class="slot"><span class="tape">VHS</span><i class="grn"></i><i></i></div>
+    <div class="slot"><span class="tape">DVD</span><i></i><i></i></div>
+  </div>
+
+  <div class="remote">
+    <div class="pad" id="pad">
+      <button class="btn live" data-go="2"><b>02</b>HOME</button>
+      <button class="btn" data-go="3"><b>03</b>TABASCO</button>
+      <button class="btn" data-go="4"><b>04</b>CRISPIN</button>
+      <button class="btn" data-go="5"><b>05</b>NETFLIX</button>
+      <button class="btn" data-go="6"><b>06</b>HOUDINI</button>
+      <button class="btn" data-go="7"><b>07</b>CREATOR</button>
+      <button class="btn" data-go="8"><b>08</b>CONTACT</button>
+      <button class="btn" id="chUp"><b>+</b>CH UP</button>
+    </div>
+    <div class="hint">ARROW KEYS TO CHANGE CHANNEL · OR PRESS 2–8</div>
+  </div>
+</div>
+
+<div class="vig"></div>
+<div class="grain"></div>
+
+<script>
+(function(){
+  const motes=document.getElementById('motes');
+  for(let i=0;i<30;i++){
+    const m=document.createElement('div');m.className='mote';
+    const s=1+Math.random()*2.8;
+    m.style.width=s+'px';m.style.height=s+'px';
+    m.style.left=(6+Math.random()*78)+'%';
+    m.style.top=(16+Math.random()*72)+'%';
+    m.style.animationDuration=(8+Math.random()*12)+'s';
+    m.style.animationDelay=(-Math.random()*16)+'s';
+    motes.appendChild(m);
+  }
+
+  const CH=[2,3,4,5,6,7,8];
+  const pages=document.querySelectorAll('.page');
+  const btns=document.querySelectorAll('[data-go]');
+  const chnum=document.getElementById('chnum');
+  const stat=document.getElementById('static');
+  const feed=document.getElementById('feed');
+  let cur=2,busy=false,t;
+
+  function tune(ch){
+    if(busy||ch===cur||!CH.includes(ch))return;
+    busy=true;
+    stat.classList.remove('on');void stat.offsetWidth;stat.classList.add('on');
+    setTimeout(()=>{
+      pages.forEach(p=>p.classList.toggle('live',+p.dataset.ch===ch));
+      btns.forEach(b=>b.classList.toggle('live',+b.dataset.go===ch));
+      feed.scrollTop=0;cur=ch;
+      chnum.textContent='CH '+String(ch).padStart(2,'0');
+      chnum.classList.add('show');
+      clearTimeout(t);t=setTimeout(()=>chnum.classList.remove('show'),1500);
+      busy=false;
+    },150);
+  }
+  function step(d){tune(CH[(CH.indexOf(cur)+d+CH.length)%CH.length])}
+
+  btns.forEach(b=>b.addEventListener('click',()=>tune(+b.dataset.go)));
+  document.getElementById('chUp').addEventListener('click',()=>step(1));
+  document.getElementById('knobA').addEventListener('click',()=>step(1));
+  document.getElementById('knobB').addEventListener('click',()=>step(-1));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowUp'||e.key==='ArrowRight'){e.preventDefault();step(1)}
+    if(e.key==='ArrowDown'||e.key==='ArrowLeft'){e.preventDefault();step(-1)}
+    const n=parseInt(e.key,10);
+    if(!isNaN(n)&&CH.includes(n))tune(n);
+  });
+
+  window.addEventListener('load',()=>{
+    stat.classList.add('on');chnum.classList.add('show');
+    setTimeout(()=>chnum.classList.remove('show'),1800);
+  });
+})();
+</script>
+</body>
+</html>
